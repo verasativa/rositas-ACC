@@ -4,7 +4,10 @@
 
 ## Pendings
 ### A list
+- Power source?
 - Test arduino app
+ - buzzer
+ - speedometer
  - Red led when breaking
  - Green led when throttling up
  - lcd distance / throttling rate
