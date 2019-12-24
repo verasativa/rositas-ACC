@@ -48,18 +48,47 @@
 const int rs = 8, en = 9, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
+// Throtte
+const int top_rate = 255;
+const int full_throtte_distance = 10;
+const int no_throttle_distance = 1;
+const int throtte_pin = 2;
+
+// debug
+const bool enable_serial_debug = false;
+
+int get_throtte_rate(float distance){
+  if(distance < no_throttle_distance){
+    return 0;
+  }
+  float actionable_range = (full_throtte_distance - no_throttle_distance);
+  float rate = sqrt(top_rate) / actionable_range;
+  float throtte_rate = sq((distance - no_throttle_distance) * rate);
+  if (throtte_rate > top_rate){
+    return top_rate;
+  }
+  return int(throtte_rate);
+}
+
 void setup() {
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   // Print a message to the LCD.
   lcd.print("Verae radar");
-  //pinMode(42, OUTPUT);
-  //pinMode(43, OUTPUT);
+  // radar serial
   Serial1.begin(19200);
-  //Serial.begin(19200);
-  //while (!Serial) {
-  //  ; // wait for serial port to connect. Needed for native USB port only
-  //}
+  // throtte pin
+  pinMode(throtte_pin, OUTPUT); 
+
+  // Serial debug
+  if(enable_serial_debug){
+    Serial.begin(19200);
+    while (!Serial) {
+      ; // wait for serial port to connect. Needed for native USB port only
+    }
+  }
+  
+
 }
 
 void loop() {
@@ -95,8 +124,10 @@ void loop() {
       inString = "";
     }
     //distance_str = String(distance);
-    //Serial.println(inString);
     lcd.print(distance);
+    float throtte_rate = get_throtte_rate(distance);
+    Serial.println(throtte_rate);
+    analogWrite(throtte_pin, throtte_rate);
   }
   // print the number of seconds since reset:
   //lcd.print(millis() / 1000);
