@@ -5,14 +5,14 @@
 ## Pendings
 ### A list
 - Shop list
- - [Sallen-Key Low-pass Filter](http://sim.okawa-denshi.jp/en/OPseikiLowkeisan.htm)
- - Speed sensor
- - Buzzer
+  - [Sallen-Key Low-pass Filter](http://sim.okawa-denshi.jp/en/OPseikiLowkeisan.htm)
+  - Speed sensor
+  - Buzzer
 - Make a provisory mount
 - test power from bike
 - make wiring diagrams / plans, considering:
- - parallel and altenate modes for manual throttle and cruise control
- - breaks reading and writting
+  - parallel and altenate modes for manual throttle and cruise control
+  - breaks reading and writting
  
 ### B list
  - Arduino app
