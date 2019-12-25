@@ -4,18 +4,17 @@
 
 ## Pendings
 ### A list
-- Power source?
-- Test arduino app
- - buzzer
- - speedometer
- - Red led when breaking
- - Green led when throttling up
- - lcd distance / throttling rate
+- Shop list
+ - [Sallen-Key Low-pass Filter](http://sim.okawa-denshi.jp/en/OPseikiLowkeisan.htm)
+ - Speed sensor
+ - Buzzer
 - Make a provisory mount
-- measure throttle with power and confirm protocol
-- implement throttle —probably double hall 48v– emulation
+- test power from bike
  
 ### B list
+ - Arduino app
+  - add breaking
+  - add speed reading
  - Add a laser in case that radar direction is hard to figureout
 
 ### C list
