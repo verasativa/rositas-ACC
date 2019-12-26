@@ -27,6 +27,8 @@
 ## Hardware used
  - [OPS243-C FMCW and Doppler Radar Sensor](https://omnipresense.com/product/ops243-c-fmcw-and-doppler-radar-sensor/)
  - [Arduino Mega 2560](https://store.arduino.cc/usa/mega-2560-r3)
+ 
+![wiring diagram](docs/connections.png)
 
 ## Saferity check list
 
