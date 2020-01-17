@@ -11,10 +11,19 @@ const int top_rate = 100;
 const int full_throtte_distance = 10;
 const int no_throttle_distance = 1;
 const int throtte_pin = 2;
+const int buzzer_pin = 3;
+const int speedometer_pin = 10;
+const int wheel_diameter = 1200; // Milimeters
 
 // debug
 const bool enable_serial_debug = false;
 unsigned long time = micros();
+
+float read_speed(){
+  int rotation_time = pulseInLong(speedometer_pin, LOW);
+  int speed = wheel_diameter / rotation_time;
+  return speed;
+}
 
 int get_throtte_rate(float distance){
   if(distance < no_throttle_distance){
@@ -29,32 +38,47 @@ int get_throtte_rate(float distance){
   return int(throtte_rate);
 }
 
+void beep(unsigned char delayms) { //creating function
+  analogWrite(buzzer_pin, 20); //Setting pin to high
+  delay(delayms); //Delaying
+  analogWrite(buzzer_pin ,0); //Setting pin to LOW
+  delay(delayms); //Delaying
+
+}
+
 void setup() {
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   // Print a message to the LCD.
   lcd.print("Verae radar");
 
+  // throtte pin
+  pinMode(throtte_pin, OUTPUT);
+  // buzzer pin
+  pinMode(buzzer_pin, OUTPUT);
+  // speedometer pin
+  pinMode(speedometer_pin, INPUT);
 
   // Wait for radar bootup
   lcd.setCursor(0, 1);
   lcd.print("Waiting radar.");
+  beep(50); //Beep
   delay(1000);
   lcd.print(".");
+  beep(50); //Beep
   delay(1000);
   lcd.print(".");
+  beep(50); //Beep
   delay(1000);
 
 
 
-  
+
   lcd.setCursor(0, 1);
   lcd.print("                ");
-  
+
   // radar serial
   Serial1.begin(19200);
-  // throtte pin
-  pinMode(throtte_pin, OUTPUT); 
 
   // Serial debug
   if(enable_serial_debug){
@@ -102,8 +126,19 @@ void loop() {
     }
     //distance_str = String(distance);
     lcd.print(distance);
+
+    // get speed
+    //float speed = read_speed();
+    //lcd.setCursor(0, 0);
+
+    //dtostrf(speed, 5, 2, speedms);
+    //dtostrf(speed * 3.6, 5, 2, speedkh);
+    //String line = "VRa " + String(speedms) + " " + String(speedkh);
+    //lcd.print(line);
+
+
     float throtte_rate = get_throtte_rate(distance);
-    
+
     // Just show in screen a 0-1 ration
     // throtte_rate = 110;
     Serial.println(throtte_rate);
@@ -112,7 +147,7 @@ void loop() {
     // Print bucle time
     lcd.setCursor(11, 0);
     lcd.print(micros() - time);
-    
+
     // Print throttle rate
     lcd.setCursor(8, 1);
     lcd.print(throtte_rate);
