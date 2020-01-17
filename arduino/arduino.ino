@@ -11,10 +11,19 @@ const int top_rate = 255;
 const int full_throtte_distance = 5;
 const int no_throttle_distance = 1;
 const int throtte_pin = 2;
+const int buzzer_pin = 3;
+const int speedometer_pin = 10;
+const int wheel_diameter = 1200; // Milimeters
 
 // debug
-const bool enable_serial_debug = false;
+const bool enable_serial_debug = true;
 unsigned long time = micros();
+
+float read_speed(){
+  int rotation_time = pulseInLong(speedometer_pin, LOW);
+  int speed = wheel_diameter / rotation_time;
+  return speed;
+}
 
 int get_throtte_rate(float distance){
   if(distance < no_throttle_distance){
@@ -29,6 +38,14 @@ int get_throtte_rate(float distance){
   return int(throtte_rate);
 }
 
+void beep(unsigned char delayms) { //creating function
+  analogWrite(buzzer_pin, 20); //Setting pin to high
+  delay(delayms); //Delaying
+  analogWrite(buzzer_pin ,0); //Setting pin to LOW
+  delay(delayms); //Delaying
+  
+}
+
 void setup() {
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
@@ -38,6 +55,13 @@ void setup() {
   Serial1.begin(19200);
   // throtte pin
   pinMode(throtte_pin, OUTPUT); 
+  // buzzer pin
+  pinMode(buzzer_pin, OUTPUT);
+  // speedometer pin
+  pinMode(speedometer_pin, INPUT);
+  beep(50); //Beep
+  beep(50); //Beep
+  delay(1000); //Add a little delay
 
   // Serial debug
   if(enable_serial_debug){
@@ -58,7 +82,9 @@ void loop() {
   static float distance = 0;
   //static String distance_str;
   static String inString = "";    // string to hold speed input from serial line
-  static bool firstTimeInLoop = true;
+  static bool firstTimeInLoop = true;  
+  char speedms[5];
+  char speedkh[5];
   if (firstTimeInLoop) {
     Serial1.write("ou");
     firstTimeInLoop = false;
@@ -84,8 +110,19 @@ void loop() {
     }
     //distance_str = String(distance);
     lcd.print(distance);
+    
+    // get speed
+    float speed = read_speed();
+    lcd.setCursor(0, 0);
+    
+    dtostrf(speed, 5, 2, speedms);
+    dtostrf(speed * 3.6, 5, 2, speedkh);
+    String line = "VRa " + String(speedms) + " " + String(speedkh);
+    lcd.print(line);
+
+    
     float throtte_rate = get_throtte_rate(distance);
-    throtte_rate = 110;
+    // throtte_rate = 110;
     Serial.println(throtte_rate);
     analogWrite(throtte_pin, throtte_rate);
 
