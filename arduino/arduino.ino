@@ -7,8 +7,8 @@ const int rs = 8, en = 9, d4 = 4, d5 = 5, d6 = 6, d7 = 7;
 LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
 
 // Throtte
-const int top_rate = 255;
-const int full_throtte_distance = 5;
+const int top_rate = 100;
+const int full_throtte_distance = 10;
 const int no_throttle_distance = 1;
 const int throtte_pin = 2;
 
@@ -34,6 +34,23 @@ void setup() {
   lcd.begin(16, 2);
   // Print a message to the LCD.
   lcd.print("Verae radar");
+
+
+  // Wait for radar bootup
+  lcd.setCursor(0, 1);
+  lcd.print("Waiting radar.");
+  delay(1000);
+  lcd.print(".");
+  delay(1000);
+  lcd.print(".");
+  delay(1000);
+
+
+
+  
+  lcd.setCursor(0, 1);
+  lcd.print("                ");
+  
   // radar serial
   Serial1.begin(19200);
   // throtte pin
@@ -60,6 +77,7 @@ void loop() {
   static String inString = "";    // string to hold speed input from serial line
   static bool firstTimeInLoop = true;
   if (firstTimeInLoop) {
+    // Set radar settings TODO: document exactly what this does
     Serial1.write("ou");
     firstTimeInLoop = false;
   }
@@ -85,13 +103,18 @@ void loop() {
     //distance_str = String(distance);
     lcd.print(distance);
     float throtte_rate = get_throtte_rate(distance);
-    throtte_rate = 110;
+    
+    // Just show in screen a 0-1 ration
+    // throtte_rate = 110;
     Serial.println(throtte_rate);
-    analogWrite(throtte_pin, throtte_rate);
+    //analogWrite(throtte_pin, throtte_rate);
 
     // Print bucle time
+    lcd.setCursor(11, 0);
+    lcd.print(micros() - time);
+    
+    // Print throttle rate
     lcd.setCursor(8, 1);
-    //lcd.print(micros() - time);
     lcd.print(throtte_rate);
     time = micros();
   }
